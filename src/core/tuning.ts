@@ -38,6 +38,7 @@ export const TUNING = {
     points: 100,
     splitWeights: [0.5, 0.25, 0.15, 0.1],
   },
+  convert: { squareRatio: 0.12, alignDist: 8, glueDist: 16, straightenDeg: 8 },
   pcloud: { n: 32, epsilon: 0.5, seed: 4242, templates: 24 },
   recognize: {
     samples: 96,
