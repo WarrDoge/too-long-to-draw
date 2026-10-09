@@ -147,9 +147,11 @@ navigate with `history.pushState`, listen to `popstate`. After a rename the URL 
   set into free ends, and offsets the copy by one grid step.
 - Grid with snap; zoom and pan.
 - Fill and stroke color; z-order (bring to front / send to back) among a shape's siblings.
-- **Containers:** when a shape is dropped, moved or converted, its parent becomes the smallest
-  other shape that fully contains it, or none. A descendant is never chosen. Moving a container
-  moves its descendants. A child always renders above its parent: rendering walks root shapes in
+- **Containers:** when a shape is dropped, moved, resized or converted, its parent becomes the
+  smallest other shape that fully contains it, or none. A descendant is never chosen. The same
+  rule is then re-applied to every shape it now contains or used to parent, so a box drawn around
+  existing shapes adopts them and a shrunk container releases what no longer fits. Moving a
+  container moves its descendants. A child always renders above its parent: rendering walks root shapes in
   array order, each followed by its children. A container's label sits top-left.
 - **Connectors:** ends glue to shapes and reroute when shapes move. The palette's Connector item
   drops a straight arrow with free ends. Dragging an end of a selected connector onto a shape

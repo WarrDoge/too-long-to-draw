@@ -11,6 +11,7 @@ import {
   paste,
   renderOrder,
   reparent,
+  resizeShape,
   sendToBack,
   setText,
 } from "./ops";
@@ -177,4 +178,21 @@ test("setText drops empty connector label", () => {
   );
   expect("label" in (setText(d, "k", "") as Diagram).connectors[0]!).toBe(false);
   expect(setText(d, "k", "yo").connectors[0]?.label).toBe("yo");
+});
+
+test("reparent adopts contained shapes and releases ones left outside", () => {
+  const inner = sh("inner", 20, 20, 100, 100);
+  const leaf = sh("leaf", 30, 30, 20, 20, "inner");
+  const free = sh("free", 200, 20, 40, 40);
+  const box = sh("box", 0, 0, 300, 200);
+  const d = reparent(dia([inner, leaf, free, box]), ["box"]);
+  const parent = (x: Diagram, id: string) => x.shapes.find((s) => s.id === id)?.parent;
+  expect(parent(d, "inner")).toBe("box");
+  expect(parent(d, "free")).toBe("box");
+  expect(parent(d, "leaf")).toBe("inner");
+  expect(renderOrder(d).map((s) => s.id)).toEqual(["box", "inner", "leaf", "free"]);
+  const shrunk = reparent(resizeShape(d, "box", { x: 0, y: 0, w: 150, h: 200 }), ["box"]);
+  expect(parent(shrunk, "inner")).toBe("box");
+  expect(parent(shrunk, "free")).toBeUndefined();
+  expect(Diagram.safeParse(shrunk).success).toBe(true);
 });

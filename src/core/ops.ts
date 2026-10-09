@@ -82,12 +82,20 @@ export function parentFor(d: Diagram, shapeId: Id): Id | undefined {
   return best?.id;
 }
 
+/** Applies the container rule to the listed shapes, then to every shape they now contain or used to parent. */
 export function reparent(d: Diagram, ids: readonly Id[]): Diagram {
   let out = d;
-  for (const id of ids) {
-    if (!out.shapes.some((s) => s.id === id)) continue;
+  const set = (id: Id) => {
     const p = parentFor(out, id);
     out = { ...out, shapes: mapIn(out.shapes, new Set([id]), (s) => withParent(s, p)) };
+  };
+  const listed = ids.filter((id) => d.shapes.some((s) => s.id === id));
+  for (const id of listed) set(id);
+  for (const id of listed) {
+    const r = shapeRect(out.shapes.find((s) => s.id === id)!);
+    for (const o of out.shapes) {
+      if (o.id !== id && (o.parent === id || containsRect(r, shapeRect(o)))) set(o.id);
+    }
   }
   return out;
 }

@@ -238,7 +238,7 @@ function onPointerUp(e: PointerEvent) {
       }
       break;
     case "resize":
-      if (i?.kind === "resize") commit(resizeShape(cur, i.id, i.rect));
+      if (i?.kind === "resize") commit(reparent(resizeShape(cur, i.id, i.rect), [i.id]));
       break;
     case "end": {
       if (i?.kind !== "end") break;
